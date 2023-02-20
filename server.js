@@ -7,6 +7,8 @@ const dotenv = require('dotenv').config();
 const app = express();
 
 // ! ミドルウェアの使用
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
