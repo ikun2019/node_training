@@ -6,21 +6,23 @@
   <main>
     <% if (prods.length > 0) { %>
       <div class="grid">
-        <article class="card product-item">
-          <header class="card__header">
-            <h1 class="product__title">Great Book</h1>
-          </header>
-          <div class="card__image">
-            <img src="" alt="">
-          </div>
-          <div class="card__content">
-            <h2 class="product__price">$19.99</h2>
-            <p class="product__description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium alias, eveniet expedita ea unde exercitationem tempore animi minus cumque ducimus, corporis voluptatibus vitae sapiente accusantium! Eaque ex veritatis dolor unde!</p>
-          </div>
-          <div class="card__actions">
-            <button class="btn">Add to Cart</button>
-          </div>
-        </article>
+        <% for (let product of prods) { %>
+          <article class="card product-item">
+            <header class="card__header">
+              <h1 class="product__title">Great Book</h1>
+            </header>
+            <div class="card__image">
+              <img src="" alt="">
+            </div>
+            <div class="card__content">
+              <h2 class="product__price">$19.99</h2>
+              <p class="product__description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium alias, eveniet expedita ea unde exercitationem tempore animi minus cumque ducimus, corporis voluptatibus vitae sapiente accusantium! Eaque ex veritatis dolor unde!</p>
+            </div>
+            <div class="card__actions">
+              <button class="btn">Add to Cart</button>
+            </div>
+          </article>
+        <% } %>
       </div>
     <% } else { %>
       <h1>No Products Found!</h1>
