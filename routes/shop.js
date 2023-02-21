@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const shopController = require('../controllers/shop');
+const productsController = require('../controllers/products');
 
-// ! 商品一覧表示（トップページ）
+// ! 商品一覧表示（トップページ） GET => /
 // * UI表示
-router.get('/', shopController.getProducts);
+router.get('/', productsController.getProducts);
 
 module.exports = router;
