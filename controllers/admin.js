@@ -1,3 +1,5 @@
+const Product = require('../models/Product');
+
 // * 商品追加ページ表示
 // * /admin/add-product
 exports.getAddProduct = (req, res, next) => {
@@ -8,4 +10,12 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 // ! 商品追加機能
-exports.postAddProduct = (req, res, next) => {};
+exports.postAddProduct = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    await Product.create(req.body);
+    res.redirect('/');
+  } catch (err) {
+    res.redirect('/admin/add-product');
+  }
+};
