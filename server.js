@@ -1,7 +1,9 @@
 // ! モジュールの読み込み
+const colors = require('colors');
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv').config();
+const sequelize = require('./config/database');
 
 // ! アプリの初期化
 const app = express();
@@ -23,4 +25,13 @@ app.use((req, res, next) => {
 });
 
 // ! サーバーの待ち受け
-app.listen(process.env.PORT);
+sequelize.sync({ alter: true })
+  .then(result => {
+    console.log('result:', result);
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running PORT${process.env.PORT}`.bgGreen);
+    });
+  })
+  .catch(err => {
+    console.log(err);
+  });
