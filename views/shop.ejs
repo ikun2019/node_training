@@ -9,14 +9,14 @@
         <% for (let product of prods) { %>
           <article class="card product-item">
             <header class="card__header">
-              <h1 class="product__title">Great Book</h1>
+              <h1 class="product__title"><%= product.title %></h1>
             </header>
             <div class="card__image">
-              <img src="" alt="">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
             </div>
             <div class="card__content">
-              <h2 class="product__price">$19.99</h2>
-              <p class="product__description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium alias, eveniet expedita ea unde exercitationem tempore animi minus cumque ducimus, corporis voluptatibus vitae sapiente accusantium! Eaque ex veritatis dolor unde!</p>
+              <h2 class="product__price">$<%= product.price %></h2>
+              <p class="product__description"><%= product.description %></p>
             </div>
             <div class="card__actions">
               <button class="btn">Add to Cart</button>

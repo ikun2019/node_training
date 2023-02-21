@@ -1,11 +1,8 @@
 const router = require('express').Router();
+const shopController = require('../controllers/shop');
 
-router.get('/', (req, res, next) => {
-  res.render('shop', {
-    pageTitle: 'Shop',
-    path: '/',
-    prods: []
-  });
-});
+// ! 商品一覧表示（トップページ）
+// * UI表示
+router.get('/', shopController.getProducts);
 
 module.exports = router;
