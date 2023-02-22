@@ -1,9 +1,9 @@
-<%- include('./include/head.ejs') %>
+<%- include('../include/head.ejs') %>
 <link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body>
-  <%- include('./include/navigation.ejs') %>
+  <%- include('../include/navigation.ejs') %>
   <main>
     <% if (prods.length > 0) { %>
       <div class="grid">
@@ -30,4 +30,4 @@
       <h1>No Products Found!</h1>
     <% } %>
   </main>
-<%- include('./include/end.ejs') %>
+<%- include('../include/end.ejs') %>

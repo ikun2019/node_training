@@ -25,7 +25,7 @@ exports.postAddProduct = async (req, res, next) => {
 exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.findAll();
-    res.render('shop', {
+    res.render('shop/product-list', {
       pageTitle: 'Shop',
       path: '/',
       prods: products
@@ -39,10 +39,14 @@ exports.getProducts = async (req, res, next) => {
 // * UI表示
 exports.getProduct = async (req, res, next) => {
   const prodId = req.params.productId;
-  const product = await Product.findByPk(prodId);
-  res.render('shop/product-detail', {
-    product: product,
-    pageTitle: product.title,
-    path: '/products'
-  });
+  try {
+    const product = await Product.findByPk(prodId);
+    res.render('shop/product-detail', {
+      product: product,
+      pageTitle: product.title,
+      path: '/products'
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
