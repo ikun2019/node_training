@@ -17,12 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // !　ルーティング
 app.use('/admin', require('./routes/admin'));
 app.use('/', require('./routes/shop'));
-app.use((req, res, next) => {
-  res.status(404)
-    .render('404', {
-      pageTitle: 'Page Not Found!'
-    });
-});
+app.use(require('./controllers/error').get404Page);
 
 // ! サーバーの待ち受け
 sequelize.sync({ alter: true })
