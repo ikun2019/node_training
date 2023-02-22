@@ -34,3 +34,15 @@ exports.getProducts = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// ! 商品詳細表示機能 GET => /products/:productId
+// * UI表示
+exports.getProduct = async (req, res, next) => {
+  const prodId = req.params.productId;
+  const product = await Product.findByPk(prodId);
+  res.render('shop/product-detail', {
+    product: product,
+    pageTitle: product.title,
+    path: '/products'
+  });
+};

@@ -1,4 +1,5 @@
 <%- include('./include/head.ejs') %>
+<link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body>
@@ -19,6 +20,7 @@
               <p class="product__description"><%= product.description %></p>
             </div>
             <div class="card__actions">
+              <a href="/products/<%= product.id %>" class="btn">Details</a>
               <button class="btn">Add to Cart</button>
             </div>
           </article>
