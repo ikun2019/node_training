@@ -17,6 +17,9 @@ router.get('/products/:productId', shopController.getProduct);
 // * UI表示
 router.get('/cart', shopController.getCart);
 
+// ! オーダーページ GET => /orders
+router.get('/orders', shopController.getOrders);
+
 // ! 注文ページ GET => /checkout
 // *  UI表示
 router.get('/checkout', shopController.getCheckout);

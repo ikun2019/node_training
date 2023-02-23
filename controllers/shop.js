@@ -70,3 +70,15 @@ exports.getCheckout = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// ! オーダーページ GET => /orders
+exports.getOrders = async (req, res, next) => {
+  try {
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders'
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
