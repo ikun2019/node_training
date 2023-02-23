@@ -13,9 +13,11 @@ router.get('/products', shopController.getProducts);
 // * UI表示
 router.get('/products/:productId', shopController.getProduct);
 
-// ! カートページ GET => /cart
+// ! カートページ GET & POST => /cart
 // * UI表示
 router.get('/cart', shopController.getCart);
+// * カート追加機能
+router.post('/cart', shopController.postCart);
 
 // ! オーダーページ GET => /orders
 router.get('/orders', shopController.getOrders);

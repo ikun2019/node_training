@@ -46,7 +46,7 @@ exports.getProduct = async (req, res, next) => {
   }
 };
 
-// ! カート表示機能 GET => /cart
+// ! カート表示機能 GET & POST => /cart
 // * UI表示
 exports.getCart = async (req, res, next) => {
   try {
@@ -54,6 +54,15 @@ exports.getCart = async (req, res, next) => {
       path: '/cart',
       pageTitle: 'Your Cart'
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
+// * カート追加機能
+exports.postCart = async (req, res, next) => {
+  const prodId = req.body.productId;
+  try {
+    res.redirect('/cart');
   } catch (err) {
     console.log(err);
   }
