@@ -12,7 +12,6 @@ exports.getAddProduct = (req, res, next) => {
 // * 機能部分
 exports.postAddProduct = async (req, res, next) => {
   try {
-    console.log(req.body);
     await Product.create(req.body);
     res.redirect('/');
   } catch (err) {
@@ -20,31 +19,15 @@ exports.postAddProduct = async (req, res, next) => {
   }
 };
 
-// ! 商品一覧表示機能 GET => /
+// ! 商品一覧表示ページ（Admin Products） GET => /admin/products
 // * UI表示
 exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.findAll();
-    res.render('shop/product-list', {
-      pageTitle: 'Shop',
-      path: '/',
-      prods: products
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-// ! 商品詳細表示機能 GET => /products/:productId
-// * UI表示
-exports.getProduct = async (req, res, next) => {
-  const prodId = req.params.productId;
-  try {
-    const product = await Product.findByPk(prodId);
-    res.render('shop/product-detail', {
-      product: product,
-      pageTitle: product.title,
-      path: '/products'
+    res.render('admin/products', {
+      prods: products,
+      path: '/admin/products',
+      pageTitle: 'Admin Products'
     });
   } catch (err) {
     console.log(err);

@@ -5,6 +5,10 @@ const path = require('path');
 const dotenv = require('dotenv').config();
 const sequelize = require('./config/database');
 
+const adminRoute = require('./routes/admin');
+const shopRoute = require('./routes/shop');
+const errorRoute = require('./controllers/error');
+
 // ! アプリの初期化
 const app = express();
 
@@ -15,9 +19,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // !　ルーティング
-app.use('/admin', require('./routes/admin'));
-app.use('/', require('./routes/shop'));
-app.use(require('./controllers/error').get404Page);
+app.use('/admin', adminRoute);
+app.use('/', shopRoute);
+app.use(errorRoute.get404Page);
 
 // ! サーバーの待ち受け
 sequelize.sync({ alter: true })

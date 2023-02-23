@@ -1,13 +1,25 @@
 const router = require('express').Router();
-const productsController = require('../controllers/products');
+const shopController = require('../controllers/shop');
 
-// ! 商品一覧表示（トップページ） GET => /
+// ! 商品一覧ページ（トップ） GET => /
 // * UI表示
-router.get('/', productsController.getProducts);
+router.get('/', shopController.getIndex);
 
-// ! 商品詳細表示機能 GET => /products/:productId
+// ! 商品一覧ページ（Products） GET => /products
 // * UI表示
-router.get('/products/:productId', productsController.getProduct);
+router.get('/products', shopController.getProducts);
+
+// ! 商品詳細ページ GET => /products/:productId
+// * UI表示
+router.get('/products/:productId', shopController.getProduct);
+
+// ! カートページ GET => /cart
+// * UI表示
+router.get('/cart', shopController.getCart);
+
+// ! 注文ページ GET => /checkout
+// *  UI表示
+router.get('/checkout', shopController.getCheckout);
 
 
 module.exports = router;
