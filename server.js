@@ -5,6 +5,10 @@ const path = require('path');
 const dotenv = require('dotenv').config();
 const sequelize = require('./config/database');
 
+const Product = require('./models/Product');
+const User = require('./models/User');
+const Cart = require('./models/Cart');
+
 const adminRoute = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorRoute = require('./controllers/error');
@@ -22,6 +26,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', adminRoute);
 app.use('/', shopRoute);
 app.use(errorRoute.get404Page);
+
+// ! アソシエーション
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE'});
+User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
 
 // ! サーバーの待ち受け
 sequelize.sync({ alter: true })
