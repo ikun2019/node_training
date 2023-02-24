@@ -3,7 +3,7 @@ const Product = require('../models/Product');
 // ! 商品追加機能  GET & POST => /admin/add-product
 // * UI表示
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
+  res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false
@@ -16,6 +16,24 @@ exports.postAddProduct = async (req, res, next) => {
     res.redirect('/');
   } catch (err) {
     res.redirect('/admin/add-product');
+  }
+};
+
+// ! 商品編集機能 GET & POST => /admin/edit-product/:productId
+// * UI表示
+exports.getEditProduct = async (req, res, next) => {
+  const prodId = req.params.productId;
+  try {
+    const product = await Product.findByPk(prodId);
+    console.log(product);
+    res.render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: true,
+      product: product
+    });
+  } catch (err) {
+    console.log(err);
   }
 };
 

@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Cart = require('../models/Cart');
 
 // ! 商品一覧ページ（トップ） GET => /
 // * UI表示
@@ -58,10 +59,12 @@ exports.getCart = async (req, res, next) => {
     console.log(err);
   }
 };
-// * カート追加機能
+// * カート追加機能 TODO:
 exports.postCart = async (req, res, next) => {
   const prodId = req.body.productId;
   try {
+    const product = await Product.findByPk(prodId);
+    Cart.
     res.redirect('/cart');
   } catch (err) {
     console.log(err);

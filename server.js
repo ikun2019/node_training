@@ -39,6 +39,21 @@ Product.belongsToMany(Cart, { through: CartItem });
 // ! サーバーの待ち受け
 sequelize.sync({ alter: true })
   .then(result => {
+    return User.findByPk(1);
+  })
+  .then(user => {
+    if (!user) {
+      return User.create({
+        name: 'ikun',
+        email: 'test@test.com'
+      });
+    }
+    return user;
+  })
+  .then(user => {
+    return user.createCart();
+  })
+  .then(result => {
     console.log('result:', result);
     app.listen(process.env.PORT, () => {
       console.log(`Server is running PORT${process.env.PORT}`.bgGreen);
