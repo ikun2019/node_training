@@ -36,6 +36,27 @@ exports.getEditProduct = async (req, res, next) => {
     console.log(err);
   }
 };
+// * 機能部分
+exports.postEditProduct = async (req, res, next) => {
+  const prodId = req.body.productId;
+  try {
+    const product = await Product.findByPk(prodId);
+    const {
+      title,
+      imageUrl,
+      price,
+      descripton
+    } = req.body;
+    product.title = title;
+    product.imageUrl = imageUrl;
+    product.price = price;
+    product.descripton = descripton;
+    await product.save();
+    res.redirect('/admin/products');
+  } catch (err) {
+    console.log(err);
+  } 
+};
 
 // ! 商品一覧表示ページ（Admin Products） GET => /admin/products
 // * UI表示
