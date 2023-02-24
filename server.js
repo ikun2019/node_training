@@ -8,6 +8,7 @@ const sequelize = require('./config/database');
 const Product = require('./models/Product');
 const User = require('./models/User');
 const Cart = require('./models/Cart');
+const CartItem = require('./models/CartItem');
 
 const adminRoute = require('./routes/admin');
 const shopRoute = require('./routes/shop');
@@ -32,6 +33,8 @@ Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE'});
 User.hasMany(Product);
 User.hasOne(Cart);
 Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 // ! サーバーの待ち受け
 sequelize.sync({ alter: true })
