@@ -64,7 +64,10 @@ exports.postCart = async (req, res, next) => {
   const prodId = req.body.productId;
   try {
     const product = await Product.findByPk(prodId);
-    Cart.
+    const usersCart = req.user.getCart();
+    usersCart.addProduct(product, {
+      through: { quantity: 1 }
+    });
     res.redirect('/cart');
   } catch (err) {
     console.log(err);

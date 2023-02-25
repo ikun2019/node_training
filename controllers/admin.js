@@ -1,3 +1,4 @@
+const sequelize = require('../config/database');
 const Product = require('../models/Product');
 
 // ! 商品追加機能  GET & POST => /admin/add-product
@@ -12,7 +13,7 @@ exports.getAddProduct = (req, res, next) => {
 // * 機能部分
 exports.postAddProduct = async (req, res, next) => {
   try {
-    await Product.create(req.body);
+    await req.user.createProduct(req.body);
     res.redirect('/');
   } catch (err) {
     res.redirect('/admin/add-product');
@@ -24,13 +25,13 @@ exports.postAddProduct = async (req, res, next) => {
 exports.getEditProduct = async (req, res, next) => {
   const prodId = req.params.productId;
   try {
-    const product = await Product.findByPk(prodId);
-    console.log(product);
+    // const product = await Product.findByPk(prodId);
+    const products = await req.user.getProducts({ where: { id: prodId } });
     res.render('admin/edit-product', {
       pageTitle: 'Edit Product',
       path: '/admin/edit-product',
       editing: true,
-      product: product
+      product: products[0]
     });
   } catch (err) {
     console.log(err);
@@ -40,18 +41,19 @@ exports.getEditProduct = async (req, res, next) => {
 exports.postEditProduct = async (req, res, next) => {
   const prodId = req.body.productId;
   try {
-    const product = await Product.findByPk(prodId);
+    // const product = await Product.findByPk(prodId);
+    const products = await req.user.getProducts({ where: { id: prodId } });
     const {
       title,
       imageUrl,
       price,
       descripton
     } = req.body;
-    product.title = title;
-    product.imageUrl = imageUrl;
-    product.price = price;
-    product.descripton = descripton;
-    await product.save();
+    products[0].title = title;
+    products[0].imageUrl = imageUrl;
+    products[0].price = price;
+    products[0].descripton = descripton;
+    await products[0].save();
     res.redirect('/admin/products');
   } catch (err) {
     console.log(err);
@@ -62,7 +64,8 @@ exports.postEditProduct = async (req, res, next) => {
 // * UI表示
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.findAll();
+    // const products = await Product.findAll();
+    const products = await req.user.getProducts();
     res.render('admin/products', {
       prods: products,
       path: '/admin/products',
@@ -78,8 +81,9 @@ exports.getProducts = async (req, res, next) => {
 exports.postDeleteProduct = async (req, res, next) => {
   const prodId = req.body.productId;
   try {
-    const product = await Product.findByPk(prodId);
-    product.destroy();
+    // const product = await Product.findByPk(prodId);
+    const products = await req.user.getProducts();
+    products[0].destroy();
     res.redirect('/admin/products');
   } catch (err) {
     console.log(err);

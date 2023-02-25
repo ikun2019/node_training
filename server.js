@@ -22,6 +22,16 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => {
+      console.log(err);
+    })
+});
 
 // !　ルーティング
 app.use('/admin', adminRoute);
@@ -38,6 +48,7 @@ Product.belongsToMany(Cart, { through: CartItem });
 
 // ! サーバーの待ち受け
 sequelize.sync({ alter: true })
+// sequelize.sync({ force: true })
   .then(result => {
     return User.findByPk(1);
   })
@@ -54,7 +65,7 @@ sequelize.sync({ alter: true })
     return user.createCart();
   })
   .then(result => {
-    console.log('result:', result);
+    // console.log('result:', result);
     app.listen(process.env.PORT, () => {
       console.log(`Server is running PORT${process.env.PORT}`.bgGreen);
     });
