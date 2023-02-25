@@ -51,9 +51,12 @@ exports.getProduct = async (req, res, next) => {
 // * UI表示
 exports.getCart = async (req, res, next) => {
   try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
     res.render('shop/cart', {
       path: '/cart',
-      pageTitle: 'Your Cart'
+      pageTitle: 'Your Cart',
+      products: products
     });
   } catch (err) {
     console.log(err);
@@ -62,12 +65,31 @@ exports.getCart = async (req, res, next) => {
 // * カート追加機能 TODO:
 exports.postCart = async (req, res, next) => {
   const prodId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
   try {
-    const product = await Product.findByPk(prodId);
-    const usersCart = req.user.getCart();
-    usersCart.addProduct(product, {
-      through: { quantity: 1 }
-    });
+    // ユーザーのカートを取得
+    const cart = await req.user.getCart();
+    fetchedCart = cart;
+    // 選択した商品が既にカートに入っているか確認
+    const cartProducts = await cart.getProducts({ where: { id: prodId } });
+    // 商品が入っている場合の処理
+    if (cartProducts.length > 0) {
+      let cartProduct;
+      cartProduct = cartProducts[0];
+      
+      const oldQuantity = cartProduct.cartItem.quantity;
+      newQuantity = oldQuantity + 1;
+      fetchedCart.addProduct(cartProduct, {
+        through: { quantity: newQuantity }
+      });
+    } else {
+      // 商品が入っていなかった場合の処理
+      const product = await Product.findByPk(prodId);
+      fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity }
+      });
+    }
     res.redirect('/cart');
   } catch (err) {
     console.log(err);

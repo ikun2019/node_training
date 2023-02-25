@@ -47,18 +47,19 @@ Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
 // ! サーバーの待ち受け
-sequelize.sync({ alter: true })
+// sequelize.sync({ alter: true })
 // sequelize.sync({ force: true })
+sequelize.sync()
   .then(result => {
     return User.findByPk(1);
   })
   .then(user => {
-    if (!user) {
-      return User.create({
-        name: 'ikun',
-        email: 'test@test.com'
-      });
-    }
+    // if (!user) {
+    //   return User.create({
+    //     name: 'ikun',
+    //     email: 'test@test.com'
+    //   });
+    // }
     return user;
   })
   .then(user => {
