@@ -72,3 +72,16 @@ exports.getProducts = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// ! 商品削除機能 POST => /admin/delete-product
+// * 機能部分
+exports.postDeleteProduct = async (req, res, next) => {
+  const prodId = req.body.productId;
+  try {
+    const product = await Product.findByPk(prodId);
+    product.destroy();
+    res.redirect('/admin/products');
+  } catch (err) {
+    console.log(err);
+  }
+};

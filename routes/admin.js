@@ -17,4 +17,8 @@ router.post('/edit-product', adminController.postEditProduct);
 // * UI表示
 router.get('/products', adminController.getProducts);
 
+// ! 商品削除機能 POST => /admin/delete-product
+// * 機能部分
+router.post('/delete-product', adminController.postDeleteProduct);
+
 module.exports = router;
