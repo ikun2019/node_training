@@ -24,11 +24,10 @@ router.post('/cart', shopController.postCart);
 router.post('/cart-delete-item', shopController.postCartDeleteProduct);
 
 // ! オーダーページ GET => /orders
+// * UI表示
 router.get('/orders', shopController.getOrders);
-
-// ! 注文ページ GET => /checkout
-// *  UI表示
-router.get('/checkout', shopController.getCheckout);
+// * オーダー機能
+router.post('/create-order', shopController.postOrder);
 
 
 module.exports = router;

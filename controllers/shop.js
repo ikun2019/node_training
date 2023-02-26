@@ -1,5 +1,4 @@
 const Product = require('../models/Product');
-const Cart = require('../models/Cart');
 
 // ! 商品一覧ページ（トップ） GET => /
 // * UI表示
@@ -111,25 +110,35 @@ exports.postCartDeleteProduct = async (req, res, next) => {
   }
 };
 
-// ! 注文表示機能 GET => /checkout
-exports.getCheckout = async (req, res, next) => {
+// ! オーダーページ GET => /orders
+// * UI表示
+exports.getOrders = async (req, res, next) => {
   try {
-    res.render('shop/checkout', {
-      path: '/checkout',
-      pageTitle: 'Checkout'
+    const orders = await req.user.getOrders({ include: ['products'] });
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders: orders
     });
   } catch (err) {
     console.log(err);
   }
 };
-
-// ! オーダーページ GET => /orders
-exports.getOrders = async (req, res, next) => {
+// * オーダー機能
+exports.postOrder = async (req, res, next) => {
+  let fetchedCart;
   try {
-    res.render('shop/orders', {
-      path: '/orders',
-      pageTitle: 'Your Orders'
+    const cart = await req.user.getCart();
+    fetchedCart = cart;
+    const products = await fetchedCart.getProducts();
+    const order = await req.user.createOrder();
+    const mappedProducts = await products.map(product => {
+      product.orderItem = { quantity: product.cartItem.quantity };
+      return product;
     });
+    await order.addProducts(mappedProducts);
+    await fetchedCart.setProducts(null);
+    res.redirect('/orders');
   } catch (err) {
     console.log(err);
   }

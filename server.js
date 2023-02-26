@@ -61,12 +61,12 @@ sequelize.sync()
     return User.findByPk(1);
   })
   .then(user => {
-    // if (!user) {
-    //   return User.create({
-    //     name: 'ikun',
-    //     email: 'test@test.com'
-    //   });
-    // }
+    if (!user) {
+      return User.create({
+        name: 'ikun',
+        email: 'test@test.com'
+      });
+    }
     return user;
   })
   .then(user => {
