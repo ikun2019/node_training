@@ -3,6 +3,8 @@ const colors = require('colors');
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv').config();
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/database');
 
 const Product = require('./models/Product');
@@ -25,6 +27,14 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'secret_key',
+  store: new SequelizeStore({
+    db: sequelize
+  }),
+  resave: false,
+  saveUninitialized: false
+}));
 app.use((req, res, next) => {
   User.findByPk(1)
     .then(user => {
