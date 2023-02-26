@@ -41,5 +41,21 @@ exports.getSignup = async (req, res, next) => {
 };
 // * 機能部分
 exports.postSignup = async (req, res, next) => {
-
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log('email =>', email);
+  try {
+    const userDoc = await User.findOne({ where: { email: email } });
+    console.log('userDoc =>', userDoc);
+    if (userDoc) {
+      return res.redirect('/signup');
+    }
+    const user = await User.create({
+      email: email,
+      password: password
+    });
+    res.redirect('/login');
+  } catch (err) {
+    console.log(err);
+  }
 };

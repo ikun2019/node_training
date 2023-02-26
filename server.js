@@ -78,21 +78,6 @@ Product.belongsToMany(Order, { through: OrderItem });
 // sequelize.sync({ force: true })
 sequelize.sync()
   .then(result => {
-    return User.findByPk(1);
-  })
-  .then(user => {
-    if (!user) {
-      return User.create({
-        name: 'ikun',
-        email: 'test@test.com'
-      });
-    }
-    return user;
-  })
-  .then(user => {
-    return user.createCart();
-  })
-  .then(result => {
     // console.log('result:', result);
     app.listen(process.env.PORT, () => {
       console.log(`Server is running PORT${process.env.PORT}`.bgGreen);
