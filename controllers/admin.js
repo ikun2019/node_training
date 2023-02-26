@@ -8,7 +8,7 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: req.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 // * 機能部分
@@ -33,7 +33,7 @@ exports.getEditProduct = async (req, res, next) => {
       path: '/admin/edit-product',
       editing: true,
       product: products[0],
-      isAuthenticated: req.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn
     });
   } catch (err) {
     console.log(err);
@@ -72,7 +72,7 @@ exports.getProducts = async (req, res, next) => {
       prods: products,
       path: '/admin/products',
       pageTitle: 'Admin Products',
-      isAuthenticated: req.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn
     });
   } catch (err) {
     console.log(err);

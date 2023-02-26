@@ -23,17 +23,18 @@ const authRoute = require('./routes/auth');
 const app = express();
 
 // ! ミドルウェアの使用
+const store =  new SequelizeStore({
+  db: sequelize
+});
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'secret_key',
-  store: new SequelizeStore({
-    db: sequelize
-  }),
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: store
 }));
 app.use((req, res, next) => {
   User.findByPk(1)
