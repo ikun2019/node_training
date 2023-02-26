@@ -36,16 +36,23 @@ app.use(session({
   saveUninitialized: false,
   store: store
 }));
-app.use((req, res, next) => {
-  User.findByPk(1)
-    .then(user => {
-      req.user = user;
-      next();
-    })
-    .catch(err => {
-      console.log(err);
-    })
+app.use( async (req, res, next) => {
+  if (req.session.user) {
+    const user = await User.findByPk(req.session.user.id);
+    req.user = user;
+  };
+  next();
 });
+// app.use((req, res, next) => {
+//   User.findByPk(1)
+//     .then(user => {
+//       req.user = user;
+//       next();
+//     })
+//     .catch(err => {
+//       console.log(err);
+//     })
+// });
 
 // !　ルーティング
 app.use('/admin', adminRoute);
