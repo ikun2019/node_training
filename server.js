@@ -15,6 +15,7 @@ const OrderItem = require('./models/OrderItem');
 const adminRoute = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorRoute = require('./controllers/error');
+const authRoute = require('./routes/auth');
 
 // ! アプリの初期化
 const app = express();
@@ -37,7 +38,8 @@ app.use((req, res, next) => {
 
 // !　ルーティング
 app.use('/admin', adminRoute);
-app.use('/', shopRoute);
+app.use(shopRoute);
+app.use(authRoute);
 app.use(errorRoute.get404Page);
 
 // ! アソシエーション
