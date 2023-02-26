@@ -11,4 +11,10 @@ router.post('/login', authController.postLogin);
 // * 機能部分
 router.post('/logout', authController.postLogout);
 
+// !サインアップ GET & POST => /signup
+// *　UI表示
+router.get('/signup', authController.getSignup);
+// * 機能部分
+router.post('/signup', authController.postSignup);
+
 module.exports = router;

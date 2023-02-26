@@ -3,7 +3,6 @@ const User = require('../models/User');
 // ! ログインページ GET => /login
 // * UI表示
 exports.getLogin = async (req, res, next) => {
-  console.log('req session =>' ,req.session);
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
@@ -29,4 +28,18 @@ exports.postLogout = async (req, res, next) => {
     console.log(err);
     res.redirect('/');
   });
+};
+
+// !サインアップ GET & POST => /signup
+// *　UI表示
+exports.getSignup = async (req, res, next) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Sign up',
+    isAuthenticated: req.session.isLoggedIn
+  });
+};
+// * 機能部分
+exports.postSignup = async (req, res, next) => {
+
 };
