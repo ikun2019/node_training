@@ -62,7 +62,7 @@ exports.getCart = async (req, res, next) => {
     console.log(err);
   }
 };
-// * カート追加機能 TODO:
+// * カート追加機能
 exports.postCart = async (req, res, next) => {
   const prodId = req.body.productId;
   let fetchedCart;
@@ -90,6 +90,21 @@ exports.postCart = async (req, res, next) => {
         through: { quantity: newQuantity }
       });
     }
+    res.redirect('/cart');
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// ! カート削除機能 POST => /cart-delete-item
+// * カート削除機能
+exports.postCartDeleteProduct = async (req, res, next) => {
+  const prodId = req.body.productId;
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({ where: { id: prodId } });
+    const product = products[0];
+    await product.cartItem.destroy();
     res.redirect('/cart');
   } catch (err) {
     console.log(err);

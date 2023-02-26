@@ -19,6 +19,10 @@ router.get('/cart', shopController.getCart);
 // * カート追加機能
 router.post('/cart', shopController.postCart);
 
+// ! カート削除機能 POST => /cart-delete-item
+// * カート削除機能
+router.post('/cart-delete-item', shopController.postCartDeleteProduct);
+
 // ! オーダーページ GET => /orders
 router.get('/orders', shopController.getOrders);
 
