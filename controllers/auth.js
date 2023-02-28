@@ -5,10 +5,16 @@ const User = require('../models/User');
 // ! ログインページ GET => /login
 // * UI表示
 exports.getLogin = async (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: req.session.isLoggedIn
+    errorMessage: message
   });
 };
 // * 機能部分
@@ -18,6 +24,7 @@ exports.postLogin = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
+      await req.flash('error', 'emailが無効です');
       return res.redirect('/login');
     }
     const isMatched = await bcrypt.compare(password, user.password);
@@ -29,6 +36,7 @@ exports.postLogin = async (req, res, next) => {
         res.redirect('/');
       });
     }
+    req.flash('error', 'パスワードが違います');
     res.redirect('/login');
   } catch (err) {
     console.log(err);
@@ -47,10 +55,16 @@ exports.postLogout = async (req, res, next) => {
 // !サインアップ GET & POST => /signup
 // *　UI表示
 exports.getSignup = async (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Sign up',
-    isAuthenticated: req.session.isLoggedIn
+    errorMessage: message
   });
 };
 // * 機能部分
@@ -60,6 +74,7 @@ exports.postSignup = async (req, res, next) => {
   try {
     const userDoc = await User.findOne({ where: { email: email } });
     if (userDoc) {
+      await req.flash('error', 'メールアドレスが既に存在します');
       return res.redirect('/signup');
     }
     const hashedPassword = await bcrypt.hash(password, 12);

@@ -7,6 +7,7 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/database');
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const Product = require('./models/Product');
 const User = require('./models/User');
@@ -39,6 +40,7 @@ app.use(session({
   store: store
 }));
 app.use(csrfProtection);
+app.use(flash());
 app.use( async (req, res, next) => {
   if (req.session.user) {
     const user = await User.findByPk(req.session.user.id);
