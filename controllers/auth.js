@@ -13,14 +13,26 @@ exports.getLogin = async (req, res, next) => {
 };
 // * 機能部分
 exports.postLogin = async (req, res, next) => {
-  // req.isLoggedIn = true;
-  const user = await User.findByPk(1);
-  req.session.isLoggedIn = true;
-  req.session.user = user;
-  await req.session.save(err => {
+  const email = req.body.email;
+  const password = req.body.password;
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.redirect('/login');
+    }
+    const isMatched = await bcrypt.compare(password, user.password);
+    if (isMatched) {
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      return await req.session.save(err => {
+        console.log(err);
+        res.redirect('/');
+      });
+    }
+    res.redirect('/login');
+  } catch (err) {
     console.log(err);
-    res.redirect('/');
-  });
+  }
 };
 
 // ! ログアウト POST => /logout
@@ -45,7 +57,6 @@ exports.getSignup = async (req, res, next) => {
 exports.postSignup = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  console.log('email =>', email);
   try {
     const userDoc = await User.findOne({ where: { email: email } });
     if (userDoc) {
