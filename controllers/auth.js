@@ -93,3 +93,19 @@ exports.postSignup = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// ! パスワードリセット GET & POST => /reset
+// * UI表示
+exports.getReset = async (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset',
+    errorMessage: message
+  });
+}
