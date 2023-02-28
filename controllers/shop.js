@@ -8,8 +8,7 @@ exports.getIndex = async (req, res, next) => {
     res.render('shop/index', {
       pageTitle: 'Shop',
       path: '/',
-      prods: products,
-      isAuthenticated: req.session.isLoggedIn
+      prods: products
     });
   } catch (err) {
     console.log(err);
@@ -72,8 +71,8 @@ exports.postCart = async (req, res, next) => {
   let newQuantity = 1;
   try {
     // ユーザーのカートを取得
-    // const cart = await req.user.getCart();
-    const cart = await req.user.getCart()
+    const cart = await req.user.getCart();
+    console.log('cart => ', cart);
     fetchedCart = cart;
     // 選択した商品が既にカートに入っているか確認
     const cartProducts = await cart.getProducts({ where: { id: prodId } });

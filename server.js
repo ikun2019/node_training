@@ -6,6 +6,7 @@ const dotenv = require('dotenv').config();
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/database');
+const csrf = require('csurf');
 
 const Product = require('./models/Product');
 const User = require('./models/User');
@@ -26,6 +27,7 @@ const app = express();
 const store =  new SequelizeStore({
   db: sequelize
 });
+const csrfProtection = csrf();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: false }));
@@ -36,23 +38,24 @@ app.use(session({
   saveUninitialized: false,
   store: store
 }));
+app.use(csrfProtection);
 app.use( async (req, res, next) => {
   if (req.session.user) {
     const user = await User.findByPk(req.session.user.id);
     req.user = user;
+    if (!await req.user.getCart()) {
+      await req.user.createCart();
+    }
   };
   next();
 });
-// app.use((req, res, next) => {
-//   User.findByPk(1)
-//     .then(user => {
-//       req.user = user;
-//       next();
-//     })
-//     .catch(err => {
-//       console.log(err);
-//     })
-// });
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 
 // !　ルーティング
 app.use('/admin', adminRoute);
@@ -76,9 +79,8 @@ Product.belongsToMany(Order, { through: OrderItem });
 // ! サーバーの待ち受け
 // sequelize.sync({ alter: true })
 // sequelize.sync({ force: true })
-sequelize.sync()
+sequelize.sync({ alter: true })
   .then(result => {
-    // console.log('result:', result);
     app.listen(process.env.PORT, () => {
       console.log(`Server is running PORT${process.env.PORT}`.bgGreen);
     });
