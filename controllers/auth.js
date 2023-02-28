@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/User');
 
 // ! ログインページ GET => /login
@@ -46,13 +48,13 @@ exports.postSignup = async (req, res, next) => {
   console.log('email =>', email);
   try {
     const userDoc = await User.findOne({ where: { email: email } });
-    console.log('userDoc =>', userDoc);
     if (userDoc) {
       return res.redirect('/signup');
     }
+    const hashedPassword = await bcrypt.hash(password, 12);
     const user = await User.create({
       email: email,
-      password: password
+      password: hashedPassword
     });
     res.redirect('/login');
   } catch (err) {
