@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
+const sendEmail = require('../util/sendEmail');
 
 // ! ログインページ GET => /login
 // * UI表示
@@ -83,6 +84,11 @@ exports.postSignup = async (req, res, next) => {
       password: hashedPassword
     });
     res.redirect('/login');
+    return await sendEmail({
+      email: email,
+      subject: 'Signup succeeded!',
+      message: '<h1>Your signup is succeeded!</h1>'
+    });
   } catch (err) {
     console.log(err);
   }
