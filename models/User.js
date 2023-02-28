@@ -10,7 +10,9 @@ const User = sequelize.define('user', {
   },
   name: DataTypes.STRING,
   email: DataTypes.STRING,
-  password: DataTypes.STRING
+  password: DataTypes.STRING,
+  resetToken: DataTypes.STRING,
+  resetTokenExpiration: DataTypes.DATE
 });
 
 module.exports = User;

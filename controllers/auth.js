@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
@@ -108,4 +109,36 @@ exports.getReset = async (req, res, next) => {
     pageTitle: 'Reset',
     errorMessage: message
   });
-}
+};
+// * 機能部分
+exports.postReset = async (req, res, next) => {
+  try {
+    let token;
+    const user = await User.findOne({ where: { email: req.body.email }});
+    if (!user) {
+      req.flash('error', '該当するメールアドレスが存在しません');
+      return res.redirect('/reset');
+    }
+    await crypto.randomBytes(32, (err, buffer) => {
+      if (err) {
+        return res.redirect('/reset');
+      }
+      token = buffer.toString('hex');
+    });
+    user.resetToken = token;
+    user.resetTokenExpiration = Date.now() + 3600000;
+    await user.save();
+
+    res.redirect('/');
+    await sendEmail({
+      email: req.body.email,
+      subject: 'Password reset',
+      message: `
+        <h1>Password reset!</h1>
+        <p><a href="http://localhost:3000/reset/${token}">link</a></p>
+      `
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};

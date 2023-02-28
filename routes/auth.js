@@ -20,5 +20,7 @@ router.post('/signup', authController.postSignup);
 // ! パスワードリセット GET & POST => /reset
 // * UI表示
 router.get('/reset', authController.getReset);
+// * 機能部分
+router.post('/reset', authController.postReset);
 
 module.exports = router;
