@@ -159,8 +159,32 @@ exports.getNewPassword = async (req, res, next) => {
       path: '/new-password',
       pageTitle: '',
       errorMessage: message,
-      userId: user.id
+      userId: user.id,
+      passwordToken: token
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
+// * 機能部分
+exports.postNewPassword = async (req, res, next) => {
+  try {
+    let resetUser;
+    const newPassword = req.body.password;
+    const userId = req.body.userId;
+    const passwordToken = req.body.passwordToken;
+    const user = await User.findOne({
+      resetToken: passwordToken,
+      resetTokenExpiration: { $gt: Date.now() },
+      id: userId
+    });
+    resetUser = user;
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    resetUser.password = hashedPassword;
+    resetUser.resetToken = undefined;
+    resetUser.resetTokenExpiration =  undefined;
+    await resetUser.save();
+    res.redirect('/login');
   } catch (err) {
     console.log(err);
   }

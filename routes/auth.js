@@ -26,5 +26,7 @@ router.post('/reset', authController.postReset);
 // ! 新しいパスワードの設定画面 GET & POST => /new-password
 // * UI表示
 router.get('/reset/:token', authController.getNewPassword);
+// * 機能部分
+router.post('/new-password', authController.postNewPassword);
 
 module.exports = router;
