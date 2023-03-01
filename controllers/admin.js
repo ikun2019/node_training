@@ -45,6 +45,9 @@ exports.postEditProduct = async (req, res, next) => {
   try {
     // const product = await Product.findByPk(prodId);
     const products = await req.user.getProducts({ where: { id: prodId } });
+    if (products[0].userId !== req.user.id) {
+      return res.redirect('/');
+    }
     const {
       title,
       imageUrl,
@@ -83,10 +86,10 @@ exports.getProducts = async (req, res, next) => {
 // ! 商品削除機能 POST => /admin/delete-product
 // * 機能部分
 exports.postDeleteProduct = async (req, res, next) => {
-  const prodId = req.body.productId;
   try {
+    const prodId = req.body.productId;
     // const product = await Product.findByPk(prodId);
-    const products = await req.user.getProducts();
+    const products = await req.user.getProducts({ where: { id: prodId, userId: req.user.id } });
     products[0].destroy();
     res.redirect('/admin/products');
   } catch (err) {
