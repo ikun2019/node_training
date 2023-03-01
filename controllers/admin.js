@@ -67,7 +67,8 @@ exports.postEditProduct = async (req, res, next) => {
 exports.getProducts = async (req, res, next) => {
   try {
     // const products = await Product.findAll();
-    const products = await req.user.getProducts();
+    console.log('reqUserId =>', req.user.id);
+    const products = await req.user.getProducts({ where: { userId: req.user.id } });
     res.render('admin/products', {
       prods: products,
       path: '/admin/products',

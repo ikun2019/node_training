@@ -21,10 +21,10 @@ exports.getLogin = async (req, res, next) => {
 };
 // * 機能部分
 exports.postLogin = async (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
   try {
-    const user = await User.findOne({ email: email });
+    const email = req.body.email;
+    const password = req.body.password;
+    const user = await User.findOne({ where: { email: email } });
     if (!user) {
       await req.flash('error', 'emailが無効です');
       return res.redirect('/login');
@@ -48,10 +48,13 @@ exports.postLogin = async (req, res, next) => {
 // ! ログアウト POST => /logout
 // * 機能部分
 exports.postLogout = async (req, res, next) => {
-  await req.session.destroy(err => {
-    console.log(err);
+  try {
+    await req.session.destroy();
     res.redirect('/');
-  });
+  } catch (err) {
+    console.log(err);
+  }
+  
 };
 
 // !サインアップ GET & POST => /signup
