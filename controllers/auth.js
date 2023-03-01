@@ -142,3 +142,26 @@ exports.postReset = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// ! 新しいパスワードの設定画面 GET & POST => /new-password
+// * UI表示
+exports.getNewPassword = async (req, res, next) => {
+  try {
+    const token = req.params.token;
+    const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
+    let message = req.flash('error');
+    if (message.length > 0) {
+      message = message[0];
+    } else {
+      message = null;
+    }
+    res.render('auth/new-password', {
+      path: '/new-password',
+      pageTitle: '',
+      errorMessage: message,
+      userId: user.id
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
