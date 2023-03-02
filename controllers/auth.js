@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
 const sendEmail = require('../util/sendEmail');
+const { validationResult } = require('express-validator/check');
 
 // ! ログインページ GET => /login
 // * UI表示
@@ -77,6 +78,14 @@ exports.postSignup = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/signup', {
+        path: '/signup',
+        pageTitle: 'Signup',
+        errorMessage: errors.array()[0].msg
+      });
+    }
     const userDoc = await User.findOne({ where: { email: email } });
     if (userDoc) {
       await req.flash('error', 'メールアドレスが既に存在します');
