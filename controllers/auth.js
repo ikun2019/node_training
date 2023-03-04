@@ -70,7 +70,12 @@ exports.getSignup = async (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Sign up',
-    errorMessage: message
+    errorMessage: message,
+    oldInput: {
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
   });
 };
 // * 機能部分
@@ -83,13 +88,13 @@ exports.postSignup = async (req, res, next) => {
       return res.status(422).render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
-        errorMessage: errors.array()[0].msg
+        errorMessage: errors.array()[0].msg,
+        oldInput: {
+          email: email,
+          password: password,
+          confirmPassword: req.body.confirmPassword
+        }
       });
-    }
-    const userDoc = await User.findOne({ where: { email: email } });
-    if (userDoc) {
-      await req.flash('error', 'メールアドレスが既に存在します');
-      return res.redirect('/signup');
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = await User.create({

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const authController = require('../controllers/auth');
 const { check, body } = require('express-validator/check');
+const User = require('../models/User');
 
 // ! ログインページ GET => /login
 // * UI表示
@@ -22,10 +23,12 @@ router.post('/signup',
       .isEmail()
       .withMessage('emailを入力してください')
       .custom((value, { req }) => {
-        if (value === 'test@test.com') {
-          throw new Error('This email address is forbidden');
-        }
-        return true;
+        return User.findOne({ where: { email: value } })
+          .then(user => {
+            if (user) {
+              return Promise.reject('Emailは既に存在します');
+            }
+          })
       }),
     body('password',
       'Please enter a password with only numbers and text at least 5 characters.'
