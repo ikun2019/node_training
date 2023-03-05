@@ -41,7 +41,9 @@ exports.postAddProduct = async (req, res, next) => {
     });
     res.redirect('/');
   } catch (err) {
-    res.redirect('/admin/add-product');
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   }
 };
 
@@ -62,7 +64,9 @@ exports.getEditProduct = async (req, res, next) => {
       errorMessage: null
     });
   } catch (err) {
-    console.log(err);
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   }
 };
 // * 機能部分

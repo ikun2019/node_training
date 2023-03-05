@@ -25,7 +25,7 @@ const authRoute = require('./routes/auth');
 const app = express();
 
 // ! ミドルウェアの使用
-const store =  new SequelizeStore({
+const store = new SequelizeStore({
   db: sequelize
 });
 const csrfProtection = csrf();
@@ -41,15 +41,22 @@ app.use(session({
 }));
 app.use(csrfProtection);
 app.use(flash());
-app.use( async (req, res, next) => {
-  if (req.session.user) {
-    const user = await User.findByPk(req.session.user.id);
-    req.user = user;
-    if (!await req.user.getCart()) {
-      await req.user.createCart();
-    }
-  };
-  next();
+app.use(async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      const user = await User.findByPk(req.session.user.id);
+      if (!user) {
+        return next();
+      }
+      req.user = user;
+      if (!await req.user.getCart()) {
+        await req.user.createCart();
+      }
+    };
+    next();
+  } catch (err) {
+    throw new Error(err);
+  }
 });
 
 app.use((req, res, next) => {
@@ -63,10 +70,14 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoute);
 app.use(shopRoute);
 app.use(authRoute);
+app.get('/500', errorRoute.get500);
 app.use(errorRoute.get404Page);
+app.use((error, req, res, next) => {
+  res.redirect('/500');
+});
 
 // ! アソシエーション
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE'});
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 User.hasOne(Cart);
 Cart.belongsTo(User);
