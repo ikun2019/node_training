@@ -1,5 +1,6 @@
 const sequelize = require('../config/database');
 const Product = require('../models/Product');
+const { validationResult } = require('express-validator');
 
 // ! 商品追加機能  GET & POST => /admin/add-product
 // * UI表示
@@ -8,13 +9,36 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn,
+    hasError: false,
+    errorMessage: null
   });
 };
 // * 機能部分
 exports.postAddProduct = async (req, res, next) => {
   try {
-    await req.user.createProduct(req.body);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).render('admin/edit-product', {
+        path: '/admin/edit-product',
+        pageTitle: 'Add Product',
+        editing: false,
+        hasError: true,
+        product: {
+          title: req.body.title,
+          imageUrl: req.body.imageUrl,
+          price: req.body.price,
+          descripton: req.body.descripton
+        },
+        errorMessage: errors.array()[0].msg
+      });
+    }
+    await req.user.createProduct({
+      title: req.body.title,
+      imageUrl: req.body.imageUrl,
+      price: req.body.price,
+      description: req.body.description
+    });
     res.redirect('/');
   } catch (err) {
     res.redirect('/admin/add-product');
@@ -33,7 +57,9 @@ exports.getEditProduct = async (req, res, next) => {
       path: '/admin/edit-product',
       editing: true,
       product: products[0],
-      isAuthenticated: req.session.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn,
+      hasError: false,
+      errorMessage: null
     });
   } catch (err) {
     console.log(err);
@@ -62,7 +88,7 @@ exports.postEditProduct = async (req, res, next) => {
     res.redirect('/admin/products');
   } catch (err) {
     console.log(err);
-  } 
+  }
 };
 
 // ! 商品一覧表示ページ（Admin Products） GET => /admin/products
