@@ -18,6 +18,23 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   try {
     const errors = validationResult(req);
+    if (!req.file) {
+      return res.status(422).render('admin/edit-product', {
+        path: '/admin/edit-product',
+        pageTitle: 'Add Product',
+        editing: false,
+        hasError: true,
+        product: {
+          title: req.body.title,
+          price: req.body.price,
+          descripton: req.body.descripton
+        },
+        errorMessage: 'Attached file is not an image',
+        validationErrors: []
+      });
+    }
+    const imageUrl = req.file.path;
+
     if (!errors.isEmpty()) {
       return res.status(422).render('admin/edit-product', {
         path: '/admin/edit-product',
@@ -35,7 +52,7 @@ exports.postAddProduct = async (req, res, next) => {
     }
     await req.user.createProduct({
       title: req.body.title,
-      imageUrl: req.body.image,
+      imageUrl: imageUrl,
       price: req.body.price,
       description: req.body.description
     });
@@ -78,16 +95,18 @@ exports.postEditProduct = async (req, res, next) => {
     if (products[0].userId !== req.user.id) {
       return res.redirect('/');
     }
+    const image = req.file;
     const {
       title,
-      imageUrl,
       price,
-      descripton
+      description
     } = req.body;
     products[0].title = title;
-    products[0].imageUrl = imageUrl;
     products[0].price = price;
-    products[0].descripton = descripton;
+    if (image) {
+      products[0].imageUrl = image.path;
+    }
+    products[0].description = description;
     await products[0].save();
     res.redirect('/admin/products');
   } catch (err) {
