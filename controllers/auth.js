@@ -75,7 +75,8 @@ exports.getSignup = async (req, res, next) => {
       email: '',
       password: '',
       confirmPassword: ''
-    }
+    },
+    validationErrors: []
   });
 };
 // * 機能部分
@@ -93,7 +94,8 @@ exports.postSignup = async (req, res, next) => {
           email: email,
           password: password,
           confirmPassword: req.body.confirmPassword
-        }
+        },
+        validationErrors: errors.array()
       });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
