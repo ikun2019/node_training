@@ -7,7 +7,18 @@ const User = require('../models/User');
 // * UI表示
 router.get('/login', authController.getLogin);
 // * 機能部分
-router.post('/login', authController.postLogin);
+router.post('/login',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('有効なメールアドレスを入力してください')
+      .normalizeEmail(),
+    body('password', 'パスワードは必須です')
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim()
+  ],
+  authController.postLogin);
 
 // ! ログアウト POST => /logout
 // * 機能部分
@@ -29,12 +40,14 @@ router.post('/signup',
               return Promise.reject('Emailは既に存在します');
             }
           })
-      }),
+      })
+      .normalizeEmail(),
     body('password',
       'Please enter a password with only numbers and text at least 5 characters.'
     )
       .isLength({ min: 5 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
     body('confirmPassword')
       .custom((value, { req }) => {
         if (value !== req.body.password) {
