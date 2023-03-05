@@ -8,6 +8,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/database');
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const Product = require('./models/Product');
 const User = require('./models/User');
@@ -32,6 +33,7 @@ const csrfProtection = csrf();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: false }));
+app.use(multer({ dest: 'images' }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'secret_key',

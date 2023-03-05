@@ -26,7 +26,7 @@ exports.postAddProduct = async (req, res, next) => {
         hasError: true,
         product: {
           title: req.body.title,
-          imageUrl: req.body.imageUrl,
+          imageUrl: req.file,
           price: req.body.price,
           descripton: req.body.descripton
         },
@@ -35,7 +35,7 @@ exports.postAddProduct = async (req, res, next) => {
     }
     await req.user.createProduct({
       title: req.body.title,
-      imageUrl: req.body.imageUrl,
+      imageUrl: req.body.image,
       price: req.body.price,
       description: req.body.description
     });

@@ -13,8 +13,8 @@ router.post('/add-product',
     body('title')
       .isLength({ min: 3 })
       .trim(),
-    body('imageUrl')
-      .isURL(),
+    // body('imageUrl')
+    //   .isURL(),
     body('price')
       .isFloat(),
     body('description')
