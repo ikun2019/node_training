@@ -17,7 +17,12 @@ exports.getLogin = async (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    errorMessage: message
+    errorMessage: message,
+    oldInput: {
+      email: '',
+      password: ''
+    },
+    validationErrors: []
   });
 };
 // * 機能部分
@@ -25,10 +30,33 @@ exports.postLogin = async (req, res, next) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
+    const errors = validationResult(req);
+    console.log('Errors Array =>', errors.array());
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: errors.array()[0].msg,
+        oldInput: {
+          email: email,
+          password: password
+        },
+        validationErrors: errors.array()
+      });
+    }
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
       await req.flash('error', 'emailが無効です');
-      return res.redirect('/login');
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: 'Invalid email or password',
+        oldInput: {
+          email: email,
+          password: password
+        },
+        validationErrors: []
+      });
     }
     const isMatched = await bcrypt.compare(password, user.password);
     if (isMatched) {
@@ -39,8 +67,16 @@ exports.postLogin = async (req, res, next) => {
         res.redirect('/');
       });
     }
-    req.flash('error', 'パスワードが違います');
-    res.redirect('/login');
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage: 'Invalid email or password',
+      oldInput: {
+        email: email,
+        password: password
+      },
+      validationErrors: []
+    });
   } catch (err) {
     console.log(err);
   }
@@ -55,7 +91,7 @@ exports.postLogout = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-  
+
 };
 
 // !サインアップ GET & POST => /signup
@@ -133,7 +169,7 @@ exports.getReset = async (req, res, next) => {
 exports.postReset = async (req, res, next) => {
   try {
     let token;
-    const user = await User.findOne({ where: { email: req.body.email }});
+    const user = await User.findOne({ where: { email: req.body.email } });
     if (!user) {
       req.flash('error', '該当するメールアドレスが存在しません');
       return res.redirect('/reset');
@@ -201,7 +237,7 @@ exports.postNewPassword = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     resetUser.password = hashedPassword;
     resetUser.resetToken = undefined;
-    resetUser.resetTokenExpiration =  undefined;
+    resetUser.resetTokenExpiration = undefined;
     await resetUser.save();
     res.redirect('/login');
   } catch (err) {

@@ -1,28 +1,32 @@
 <%- include('../include/head.ejs') %>
-<link rel="stylesheet" href="/css/forms.css">
-<link rel="stylesheet" href="/css/auth.css">
-</head>
+  <link rel="stylesheet" href="/css/forms.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  </head>
 
-<body>
-  <%- include('../include/navigation.ejs') %>
-    <main>
-      <% if (errorMessage) { %>
-        <div class="user-message user-message--error"><%= errorMessage %></div>
-      <% } %>
-      <form action="/login" class="login-form" method="POST">
-        <div class="form-control">
-          <label for="email">E-mail</label>
-          <input type="email" name="email" id="email">
-        </div>
-        <div class="form-control">
-          <label for="password">Password</label>
-          <input type="password" name="password" id="password">
-        </div>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit" class="btn">Login</button>
-      </form>
-      <div class="centered">
-        <a href="/reset">Forgot your Password?</a>
-      </div>
-    </main>
-  <%- include('../include/end.ejs') %>
+  <body>
+    <%- include('../include/navigation.ejs') %>
+      <main>
+        <% if (errorMessage) { %>
+          <div class="user-message user-message--error">
+            <%= errorMessage %>
+          </div>
+          <% } %>
+            <form action="/login" class="login-form" method="POST">
+              <div class="form-control">
+                <label for="email">E-mail</label>
+                <input class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email"
+                  name="email" id="email" value="<%= oldInput.email %>">
+              </div>
+              <div class="form-control">
+                <label for="password">Password</label>
+                <input class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
+                  type="password" name="password" id="password" value="<%= oldInput.password %>">
+              </div>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="centered">
+              <a href="/reset">Forgot your Password?</a>
+            </div>
+      </main>
+      <%- include('../include/end.ejs') %>
