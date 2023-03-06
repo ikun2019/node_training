@@ -1,4 +1,7 @@
+const fs = require('fs');
+const path = require('path');
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 // ! 商品一覧ページ（トップ） GET => /
 // * UI表示
@@ -80,7 +83,7 @@ exports.postCart = async (req, res, next) => {
     if (cartProducts.length > 0) {
       let cartProduct;
       cartProduct = cartProducts[0];
-      
+
       const oldQuantity = cartProduct.cartItem.quantity;
       newQuantity = oldQuantity + 1;
       fetchedCart.addProduct(cartProduct, {
@@ -148,3 +151,30 @@ exports.postOrder = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// ! 請求書のダウンロード GET => /orders/:orderId
+exports.getInvoice = async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId;
+    // 請求書が見れるのは注文したユーザーだけであるべき
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+      return next(new Error('注文がありません'));
+    }
+    if (order.userId !== req.user.id) {
+      return next(new Errro('認証されていません'));
+    }
+    const invoiceName = 'invoice-' + orderId + '.pdf'
+    const invoicePath = path.join('data', 'invoices', invoiceName);
+    await fs.readFile(invoicePath, (err, data) => {
+      if (err) {
+        return next(err);
+      }
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline: filename="' + invoiceName + '"');
+      res.send(data);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}

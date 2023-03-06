@@ -30,5 +30,7 @@ router.get('/orders', isAuth, shopController.getOrders);
 // * オーダー機能
 router.post('/create-order', isAuth, shopController.postOrder);
 
+// ! 請求書のダウンロード GET => /orders/:orderId
+router.get('/orders/:orderId', isAuth, shopController.getInvoice);
 
 module.exports = router;
