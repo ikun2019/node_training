@@ -20,7 +20,7 @@ exports.postAddProduct = async (req, res, next) => {
     const errors = validationResult(req);
     if (!req.file) {
       return res.status(422).render('admin/edit-product', {
-        path: '/admin/edit-product',
+        path: '/admin/add-product',
         pageTitle: 'Add Product',
         editing: false,
         hasError: true,
