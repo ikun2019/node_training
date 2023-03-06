@@ -158,7 +158,9 @@ exports.getInvoice = async (req, res, next) => {
   try {
     const orderId = req.params.orderId;
     // 請求書が見れるのは注文したユーザーだけであるべき
-    const order = await Order.findByPk(orderId);
+    const order = await Order.findByPk(orderId, {
+      include: [{ model: Product }]
+    });
     if (!order) {
       return next(new Error('注文がありません'));
     }
@@ -173,7 +175,20 @@ exports.getInvoice = async (req, res, next) => {
     res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
     pdfDoc.pipe(fs.createWriteStream(invoicePath));
     pdfDoc.pipe(res);
-    pdfDoc.text('Hello World');
+
+    // PDFの中身
+    pdfDoc.fontSize(26).text('Invoice', {
+      underline: true
+    });
+    pdfDoc.text('------------------------------');
+    let totalPrice = 0;
+    order.products.forEach(prod => {
+      totalPrice = totalPrice + prod.orderItem.quantity * prod.price;
+      pdfDoc.fontSize(14).text(prod.title + '-' + prod.orderItem.quantity + ' x ' + '$' + prod.price);
+    });
+    pdfDoc.text('------------------------------');
+    pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
+
     pdfDoc.end();
   } catch (err) {
     console.log(err);
