@@ -1,5 +1,6 @@
 const sequelize = require('../config/database');
 const Product = require('../models/Product');
+const fileHelper = require('../util/file');
 const { validationResult } = require('express-validator');
 
 // ! 商品追加機能  GET & POST => /admin/add-product
@@ -104,6 +105,7 @@ exports.postEditProduct = async (req, res, next) => {
     products[0].title = title;
     products[0].price = price;
     if (image) {
+      fileHelper.deleteFile(products[0].imageUrl);
       products[0].imageUrl = image.path;
     }
     products[0].description = description;
@@ -139,6 +141,7 @@ exports.postDeleteProduct = async (req, res, next) => {
     const prodId = req.body.productId;
     // const product = await Product.findByPk(prodId);
     const products = await req.user.getProducts({ where: { id: prodId, userId: req.user.id } });
+    fileHelper.deleteFile(products[0].imageUrl);
     products[0].destroy();
     res.redirect('/admin/products');
   } catch (err) {
