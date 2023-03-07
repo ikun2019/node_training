@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const adminController = require('../controllers/admin');
 const isAuth = require('../middleware/is-auth');
-const { body } = require('express-validator/check');
+const { body } = require('express-validator');
 
 // ! 商品追加機能 GET & POST => /admin/add-product
 // * UI表示

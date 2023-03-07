@@ -28,14 +28,13 @@ exports.postAddProduct = async (req, res, next) => {
         product: {
           title: req.body.title,
           price: req.body.price,
-          descripton: req.body.descripton
+          description: req.body.description
         },
         errorMessage: 'Attached file is not an image',
         validationErrors: []
       });
     }
     const imageUrl = req.file.path;
-
     if (!errors.isEmpty()) {
       return res.status(422).render('admin/edit-product', {
         path: '/admin/edit-product',
@@ -46,11 +45,12 @@ exports.postAddProduct = async (req, res, next) => {
           title: req.body.title,
           imageUrl: req.file,
           price: req.body.price,
-          descripton: req.body.descripton
+          description: req.body.description
         },
         errorMessage: errors.array()[0].msg
       });
     }
+    console.log(req.user);
     await req.user.createProduct({
       title: req.body.title,
       imageUrl: imageUrl,
@@ -142,7 +142,7 @@ exports.postDeleteProduct = async (req, res, next) => {
     // const product = await Product.findByPk(prodId);
     const products = await req.user.getProducts({ where: { id: prodId, userId: req.user.id } });
     fileHelper.deleteFile(products[0].imageUrl);
-    products[0].destroy();
+    await products[0].destroy();
     res.redirect('/admin/products');
   } catch (err) {
     console.log(err);
