@@ -49,6 +49,7 @@ router.get('/products', isAuth, adminController.getProducts);
 
 // ! 商品削除機能 POST => /admin/delete-product
 // * 機能部分
-router.post('/delete-product', isAuth, adminController.postDeleteProduct);
+// router.post('/delete-product', isAuth, adminController.postDeleteProduct);
+router.delete('/product/:productId', isAuth, adminController.deleteProduct);
 
 module.exports = router;

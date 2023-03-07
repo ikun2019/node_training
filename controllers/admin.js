@@ -136,15 +136,19 @@ exports.getProducts = async (req, res, next) => {
 
 // ! 商品削除機能 POST => /admin/delete-product
 // * 機能部分
-exports.postDeleteProduct = async (req, res, next) => {
+exports.deleteProduct = async (req, res, next) => {
   try {
-    const prodId = req.body.productId;
+    const prodId = req.params.productId;
     // const product = await Product.findByPk(prodId);
     const products = await req.user.getProducts({ where: { id: prodId, userId: req.user.id } });
     fileHelper.deleteFile(products[0].imageUrl);
     await products[0].destroy();
-    res.redirect('/admin/products');
+    res.status(200).json({
+      message: 'Success'
+    });
   } catch (err) {
-    console.log(err);
+    res.status(500).josn({
+      message: 'Failed'
+    });
   }
 };
