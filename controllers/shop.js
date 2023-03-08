@@ -194,3 +194,31 @@ exports.getInvoice = async (req, res, next) => {
     console.log(err);
   }
 }
+
+// ! 決済機能 GET & POST => /checkout
+// * UI表示
+exports.getCheckout = async (req, res, next) => {
+  // const user = await req.user
+  //   .pupulate('cart.items.productId')
+  //   .execPopulate();
+  // const products = user.cart.items;
+  // const user = await req.user;
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
+    console.log('products =>', products);
+    let total = 0;
+    products.forEach(product => {
+      total += product.cartItem.quantity * product.price;
+    });
+    console.log('total =>', total);
+    res.render('shop/checkout', {
+      path: '/checkout',
+      pageTitle: 'Checkout',
+      products: products,
+      totalSum: total
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};

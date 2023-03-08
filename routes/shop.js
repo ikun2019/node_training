@@ -33,4 +33,8 @@ router.post('/create-order', isAuth, shopController.postOrder);
 // ! 請求書のダウンロード GET => /orders/:orderId
 router.get('/orders/:orderId', isAuth, shopController.getInvoice);
 
+// ! 決済機能 GET & POST => /checkout
+// * UI表示
+router.get('/checkout', isAuth, shopController.getCheckout);
+
 module.exports = router;
