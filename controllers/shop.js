@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const stripe = require('stripe')('sk_test_51LmfSpLgnc685VrKbwUDtWNsAcJxWMpikSt6TeHz7fT0QrnqtEudch7mAqixdufjzAiCewURYhPtrnoBfXmFpA2Y00Ip3k5hKv');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
@@ -198,11 +199,6 @@ exports.getInvoice = async (req, res, next) => {
 // ! 決済機能 GET & POST => /checkout
 // * UI表示
 exports.getCheckout = async (req, res, next) => {
-  // const user = await req.user
-  //   .pupulate('cart.items.productId')
-  //   .execPopulate();
-  // const products = user.cart.items;
-  // const user = await req.user;
   try {
     const cart = await req.user.getCart();
     const products = await cart.getProducts();
@@ -212,11 +208,28 @@ exports.getCheckout = async (req, res, next) => {
       total += product.cartItem.quantity * product.price;
     });
     console.log('total =>', total);
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: products.map(product => {
+        return {
+          name: product.title,
+          description: product.description,
+          amount: product.price * 100,
+          currency: 'usd',
+          quantity: product.cartItem.quantity
+        };
+      }),
+      // => http://localhost:3000/checkout/success
+      success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+      cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+    });
     res.render('shop/checkout', {
       path: '/checkout',
       pageTitle: 'Checkout',
       products: products,
-      totalSum: total
+      totalSum: total,
+      sessionId: session.id
     });
   } catch (err) {
     console.log(err);
