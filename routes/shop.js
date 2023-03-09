@@ -36,5 +36,7 @@ router.get('/orders/:orderId', isAuth, shopController.getInvoice);
 // ! 決済機能 GET & POST => /checkout
 // * UI表示
 router.get('/checkout', isAuth, shopController.getCheckout);
+router.get('/checkout/success', shopController.getCheckoutSuccess);
+router.get('/checkout/cancel', shopController.getCheckout);
 
 module.exports = router;

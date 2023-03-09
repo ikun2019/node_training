@@ -211,13 +211,18 @@ exports.getCheckout = async (req, res, next) => {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
+      mode: 'payment',
       line_items: products.map(product => {
         return {
-          name: product.title,
-          description: product.description,
-          amount: product.price * 100,
-          currency: 'usd',
-          quantity: product.cartItem.quantity
+          quantity: product.cartItem.quantity,
+          price_data: {
+            currency: 'usd',
+            unit_amount: product.price * 100,
+            product_data: {
+              name: product.title,
+              description: product.description
+            }
+          }
         };
       }),
       // => http://localhost:3000/checkout/success
@@ -231,6 +236,24 @@ exports.getCheckout = async (req, res, next) => {
       totalSum: total,
       sessionId: session.id
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
+exports.getCheckoutSuccess = async (req, res, next) => {
+  let fetchedCart;
+  try {
+    const cart = await req.user.getCart();
+    fetchedCart = cart;
+    const products = await fetchedCart.getProducts();
+    const order = await req.user.createOrder();
+    const mappedProducts = await products.map(product => {
+      product.orderItem = { quantity: product.cartItem.quantity };
+      return product;
+    });
+    await order.addProducts(mappedProducts);
+    await fetchedCart.setProducts(null);
+    res.redirect('/orders');
   } catch (err) {
     console.log(err);
   }
