@@ -17,10 +17,10 @@ const CartItem = require('./models/CartItem');
 const Order = require('./models/Order');
 const OrderItem = require('./models/OrderItem');
 
-const adminRoute = require('./routes/admin');
-const shopRoute = require('./routes/shop');
-const errorRoute = require('./controllers/error');
-const authRoute = require('./routes/auth');
+// const adminRoute = require('./routes/admin');
+// const shopRoute = require('./routes/shop');
+// const errorRoute = require('./controllers/error');
+// const authRoute = require('./routes/auth');
 
 // ! アプリの初期化
 const app = express();
@@ -87,14 +87,14 @@ app.use((req, res, next) => {
 
 
 // !　ルーティング
-app.use('/admin', adminRoute);
-app.use(shopRoute);
-app.use(authRoute);
-app.get('/500', errorRoute.get500);
-app.use(errorRoute.get404Page);
-app.use((error, req, res, next) => {
-  res.redirect('/500');
-});
+// app.use('/admin', adminRoute);
+// app.use(shopRoute);
+// app.use(authRoute);
+// app.get('/500', errorRoute.get500);
+// app.use(errorRoute.get404Page);
+// app.use((error, req, res, next) => {
+//   res.redirect('/500');
+// });
 
 // ! アソシエーション
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
@@ -114,7 +114,11 @@ Product.belongsToMany(Order, { through: OrderItem });
 // sequelize.sync({ force: true })
 sequelize.sync({ alter: true })
   .then(result => {
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT, (server) => {
+      // const io = require('./socket').init(server);
+      // io.on('connection', (socket) => {
+      //   console.log('Client connected.'.bgBlue);
+      // });
       console.log(`Server is running PORT${process.env.PORT}`.bgGreen);
     });
   })

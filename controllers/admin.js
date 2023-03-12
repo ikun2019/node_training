@@ -2,6 +2,7 @@ const sequelize = require('../config/database');
 const Product = require('../models/Product');
 const fileHelper = require('../util/file');
 const { validationResult } = require('express-validator');
+const io = require('../socket');
 
 // ! 商品追加機能  GET & POST => /admin/add-product
 // * UI表示
@@ -52,6 +53,13 @@ exports.postAddProduct = async (req, res, next) => {
     }
     console.log(req.user);
     await req.user.createProduct({
+      title: req.body.title,
+      imageUrl: imageUrl,
+      price: req.body.price,
+      description: req.body.description
+    });
+    io.getIO().emit('posts', {
+      action: 'create',
       title: req.body.title,
       imageUrl: imageUrl,
       price: req.body.price,
